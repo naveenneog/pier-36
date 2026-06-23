@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../design_system/tokens.dart';
 import 'feed_controller.dart';
 import 'widgets/story_card.dart';
 
@@ -22,10 +24,26 @@ class FeedScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      body: PageView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: state.cards.length,
-        itemBuilder: (context, i) => StoryCard(card: state.cards[i]),
+      body: Stack(
+        children: [
+          PageView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: state.cards.length,
+            itemBuilder: (context, i) => StoryCard(card: state.cards[i]),
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                  onPressed: () => context.push('/settings'),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -21,6 +21,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
 - **Connectors** designed: GitHub, arXiv, RSS/tech-blogs, Reddit, Notes-Git. (X designed, deferred to v2.)
 - **Real connectors implemented:** GitHub (releases), arXiv (Atom API), RSS/blogs over `httpx` with an
   injectable client; covered by hermetic `httpx.MockTransport` tests.
+- **AI Providers config UI (Flutter):** Settings → AI Providers — list, add/edit via a dynamic per-type form,
+  set default, enable/disable, and test; seeded with the Azure `DefaultAzureCredential` provider. Reachable from a
+  settings button on the feed. Unit + widget tested.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
