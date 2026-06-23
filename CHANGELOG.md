@@ -73,6 +73,7 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-23 | nightly/release workflows used special chars (→, <, +) and flow-style triggers | GitHub `startup_failure` on every push (0 jobs) | Rewrote both as clean ASCII, block-style workflows; spurious failures gone |
 | 2026-06-23 | `StoryCard.build` read `feedControllerProvider.notifier` | Widget test left a pending 250ms timer (mock load) → test failure | Moved provider reads into button callbacks (no build-time load) |
 | 2026-06-23 | `_ProviderCard` wrapped a `ListTile` in a `Container` with a background color | Flutter threw a debug assertion → widget test failed | Use a Material `Card` for tiles that need a background |
+| 2026-06-23 | `Supabase.initialize(anonKey:)` in the app | `flutter analyze` is strict (fails on **infos**); `anonKey` is deprecated | Use `publishableKey:`; keep app code info-clean |
 
 ---
 
