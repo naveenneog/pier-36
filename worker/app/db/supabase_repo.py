@@ -86,3 +86,13 @@ class SupabaseRepository:
             resp.raise_for_status()
             data = resp.json()
         return list(data)
+
+    async def get(self, table: str, params: dict | None = None) -> list[dict]:
+        async with self._http() as client:
+            resp = await client.get(
+                f"{self._base}/{table}",
+                params=params or {},
+                headers={"apikey": self._key, "Authorization": f"Bearer {self._key}"},
+            )
+            resp.raise_for_status()
+            return list(resp.json())

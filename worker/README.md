@@ -38,6 +38,14 @@ curl localhost:8000/config/status
 # {"llm_provider":"fake","supabase_configured":true,"database_configured":false,"github_oauth_configured":true}
 ```
 
+## Ingestion
+
+- `POST /ingest/preview` — connector → gateway → ranked cards (no persistence).
+- `POST /ingest/run` — same, but persists `cards` + `feed_ranked` for a `user_id`.
+- `POST /ingest/scheduler/run` — iterate **all enabled sources** and persist per owner.
+- **Auto-scheduler:** set `SCHEDULER_ENABLED=true` (+ `SCHEDULER_INTERVAL_SECONDS`) to run ingestion in-process on
+  an interval. Single replica recommended; idempotent upserts make re-runs safe.
+
 ## Layout
 ```
 app/

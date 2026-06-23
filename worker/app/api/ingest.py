@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -14,8 +14,9 @@ from app.connectors.factory import build_connector
 from app.db.persistence import SupabasePersistence
 from app.db.supabase_repo import SupabaseNotConfigured, SupabaseRepository
 from app.llm.gateway import LLMGateway
-from app.pipeline.ingest import ProcessedCard, ingest
-from app.ranking.score import rank_score
+from app.pipeline.ingest import ingest
+from app.pipeline.rank import rank_cards
+from app.pipeline.scheduler import ingest_all
 
 router = APIRouter(tags=["ingest"])
 
@@ -58,28 +59,11 @@ def get_persistence() -> SupabasePersistence:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
-def rank_cards(
-    processed: list[ProcessedCard], *, now: datetime | None = None
-) -> list[tuple[ProcessedCard, float]]:
-    now = now or datetime.now(UTC)
-    scored = [
-        (
-            card,
-            round(
-                rank_score(
-                    published_at=card.published_at or now,
-                    source_weight=0.5,
-                    similarity=0.0,
-                    engagement=0.0,
-                    now=now,
-                ),
-                4,
-            ),
-        )
-        for card in processed
-    ]
-    scored.sort(key=lambda pair: pair[1], reverse=True)
-    return scored
+def get_supabase_repo() -> SupabaseRepository:
+    try:
+        return SupabaseRepository(settings)
+    except SupabaseNotConfigured as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 async def run_preview(
@@ -133,3 +117,11 @@ async def ingest_run(
         ranked=ranked,
     )
     return {"persisted": count}
+
+
+@router.post("/ingest/scheduler/run")
+async def scheduler_run(
+    repo: SupabaseRepository = Depends(get_supabase_repo),
+) -> dict[str, int]:
+    stats = await ingest_all(repo)
+    return {"sources": stats.sources, "cards": stats.cards}

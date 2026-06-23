@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     github_oauth_client_id: str | None = None
     github_oauth_client_secret: str | None = None
 
+    # Auto-ingest scheduler (in-process interval loop; off by default)
+    scheduler_enabled: bool = False
+    scheduler_interval_seconds: int = 3600
+
     @property
     def supabase_configured(self) -> bool:
         return bool(self.supabase_url and self.supabase_service_role_key)
