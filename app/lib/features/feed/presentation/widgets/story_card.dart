@@ -15,8 +15,6 @@ class StoryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.read(feedControllerProvider.notifier);
-
     return GestureDetector(
       onTap: () => _expand(context),
       child: Container(
@@ -64,9 +62,12 @@ class StoryCard extends ConsumerWidget {
                 ActionBar(
                   liked: card.liked,
                   saved: card.saved,
-                  onLike: () => controller.toggleLike(card.id),
-                  onSave: () => controller.toggleSave(card.id),
-                  onDismiss: () => controller.dismiss(card.id),
+                  onLike: () =>
+                      ref.read(feedControllerProvider.notifier).toggleLike(card.id),
+                  onSave: () =>
+                      ref.read(feedControllerProvider.notifier).toggleSave(card.id),
+                  onDismiss: () =>
+                      ref.read(feedControllerProvider.notifier).dismiss(card.id),
                   onOpen: () => _expand(context),
                 ),
               ],

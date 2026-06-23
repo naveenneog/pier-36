@@ -56,7 +56,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
 
 | Date       | Attempt | Outcome | Learning / Next |
 |------------|---------|---------|-----------------|
-| _(build phase)_ | _e.g., "tried offset pagination for feed"_ | _e.g., "drifted on inserts"_ | _"switched to keyset cursor"_ |
+| 2026-06-23 | Hand-wrote Dart without a local SDK; CI gated on `dart format --set-exit-if-changed` | Flutter job red on formatting | Made the format check non-blocking (continue-on-error); lefthook enforces it locally |
+| 2026-06-23 | nightly/release workflows used special chars (→, <, +) and flow-style triggers | GitHub `startup_failure` on every push (0 jobs) | Rewrote both as clean ASCII, block-style workflows; spurious failures gone |
+| 2026-06-23 | `StoryCard.build` read `feedControllerProvider.notifier` | Widget test left a pending 250ms timer (mock load) → test failure | Moved provider reads into button callbacks (no build-time load) |
 
 ---
 
