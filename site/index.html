@@ -211,12 +211,25 @@
     </div>
   </section>
 
+  <section id="setup" style="background:#0a0a12;">
+    <div class="wrap">
+      <h2 class="section-title">Get connected in a few clicks</h2>
+      <p class="section-sub">Config-driven — no code edits. Bring your own Supabase + GitHub OAuth.</p>
+      <div class="grid">
+        <div class="feature"><div class="dot" style="background:var(--frost)"></div><h3>1 · Create Supabase</h3><p>Spin up a free project, then apply the two SQL migrations in <code>supabase/migrations</code>.</p></div>
+        <div class="feature"><div class="dot" style="background:var(--pulse)"></div><h3>2 · Enable GitHub</h3><p>Auth → Providers → GitHub: paste your GitHub OAuth App's client id/secret.</p></div>
+        <div class="feature"><div class="dot" style="background:var(--mint)"></div><h3>3 · Connect in-app</h3><p>Settings → Backend connection: paste the project URL + anon key. Stored locally, auto-reconnects.</p></div>
+        <div class="feature"><div class="dot" style="background:var(--aurora)"></div><h3>4 · Continue with GitHub</h3><p>One tap to sign in. The worker reads keys from config — verify with <code>/config/status</code>.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section id="status">
     <div class="wrap">
       <div class="status">
         <span class="badge">PREVIEW</span>
         <h3>Where it's at</h3>
-        <p>This is an early, honest preview. The app runs on <strong>mock data</strong> with the full design system and Reels UX; the Python worker (LLM gateway, ingest pipeline, ranking) is implemented and unit-tested; Supabase migrations and CI are in place. Live auth, real connectors, end-to-end summaries, write-back and notifications are still being built. The APK is a <strong>debug-signed</strong> sideload preview.</p>
+        <p>This is an early, honest preview. The Flutter app ships the full design system, Reels UX, a Startup Seed page, an AI-providers config screen, and a <strong>click-through Supabase connect + GitHub sign-in</strong> flow. The Python worker has <strong>real connectors</strong> (GitHub, arXiv, RSS), a pluggable LLM gateway, an end-to-end <code>/ingest/preview</code> pipeline, and config-driven Supabase wiring. The feed still renders <strong>mock data</strong> until live persistence is wired. The APK is a <strong>debug-signed</strong> sideload preview.</p>
       </div>
     </div>
   </section>

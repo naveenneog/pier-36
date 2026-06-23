@@ -29,6 +29,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
 - **Config-driven backend:** Supabase + GitHub OAuth keys are read from env (nothing hardcoded); added a
   `SupabaseRepository` (PostgREST via `httpx`) and `GET /config/status` to verify configuration without exposing
   secrets.
+- **In-app Supabase connect + GitHub sign-in (Flutter):** click-through setup — paste URL/anon key once (stored,
+  auto-reconnects), then Continue with GitHub. All `supabase_flutter` usage isolated in `SupabaseService`; demo
+  mode when not connected. Tested (connection repo + connect screen).
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.

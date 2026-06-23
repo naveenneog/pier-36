@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/connection/presentation/connect_screen.dart';
 import '../../features/feed/presentation/feed_screen.dart';
 import '../../features/seed/presentation/seed_screen.dart';
 import '../../features/settings/domain/llm_provider.dart';
@@ -40,6 +41,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     ProviderFormScreen(initial: state.extra as LlmProvider?),
               ),
             ],
+          ),
+          GoRoute(
+            path: 'connection',
+            name: 'connection',
+            builder: (context, state) => const ConnectScreen(),
           ),
         ],
       ),
