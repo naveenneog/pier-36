@@ -54,6 +54,40 @@ pytest -q
 Apply migrations in `supabase/migrations` (via the Supabase CLI or SQL editor). They create the schema,
 pgvector, indexes, and RLS policies.
 
+## Going live with Supabase (GitHub sign-in)
+
+The backend is **config-driven** — nothing is hardcoded. To connect a real Supabase project:
+
+1. **Create a Supabase project** (free tier is fine) at [supabase.com](https://supabase.com).
+2. **Enable GitHub auth:** in the dashboard, **Auth → Providers → GitHub**, paste the **Client ID/Secret** from a
+   [GitHub OAuth App](https://github.com/settings/developers) (Authorization callback URL:
+   `https://<ref>.supabase.co/auth/v1/callback`).
+3. **Apply the schema:** run `supabase/migrations/0001_init.sql` then `0002_seed_catalog.sql` in the SQL Editor
+   (or `supabase db push`).
+4. **Add keys to `worker/.env`** (gitignored — never commit secrets):
+   ```bash
+   SUPABASE_URL=https://<ref>.supabase.co
+   SUPABASE_ANON_KEY=<anon / publishable key>
+   SUPABASE_SERVICE_ROLE_KEY=<service_role key>        # SECRET — worker writes (bypasses RLS)
+   # DATABASE_URL=<pooled Postgres connection string>  # optional, SECRET
+   ```
+   Find these under **Project Settings → API** (and **→ Database** for the connection string).
+5. **Verify** the backend picked them up (no secrets are ever returned):
+   ```bash
+   curl localhost:8000/config/status
+   # {"llm_provider":"fake","supabase_configured":true,"database_configured":false,"github_oauth_configured":false}
+   ```
+
+| Key | Used by | Secret? |
+|---|---|---|
+| `SUPABASE_URL` | app + worker | no |
+| `SUPABASE_ANON_KEY` | Flutter app (RLS-protected) | low |
+| `SUPABASE_SERVICE_ROLE_KEY` | worker writes | **yes** |
+| `DATABASE_URL` | worker (optional direct Postgres) | **yes** |
+
+> Secrets live in `worker/.env` locally, **GitHub Actions secrets** in CI, and **Azure Key Vault** in prod — never
+> in source. The GitHub OAuth client id/secret are entered in the **Supabase dashboard**, not the repo.
+
 ## Conventions
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) → drives semver + CHANGELOG.
 - **Branching:** trunk-based; short-lived `feat/…`, `fix/…` branches via PR.
