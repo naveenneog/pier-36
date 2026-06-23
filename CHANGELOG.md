@@ -39,6 +39,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
   `0003_cards_readmodel.sql` denormalizes `cards` into a read model. Hermetic tests.
 - **Live feed (Flutter):** when signed in, the feed reads `feed_ranked` + `cards` from Supabase
   (`SupabaseFeedRepository`); falls back to the mock demo when not connected. Source-type mapping is unit-tested.
+- **Sources management UI (Flutter):** add/edit/enable/delete GitHub/arXiv/RSS/Reddit/Notes sources via a dynamic
+  per-type form; persists to the Supabase `sources` table when signed in (mock demo otherwise). Tested.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.

@@ -29,6 +29,13 @@ class SettingsScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/ai-providers'),
           ),
+          ListTile(
+            leading: const Icon(Icons.rss_feed),
+            title: const Text('Sources'),
+            subtitle: const Text('Follow GitHub, arXiv, RSS, Reddit…'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/settings/sources'),
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.cloud_outlined),

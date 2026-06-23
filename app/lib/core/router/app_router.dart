@@ -8,6 +8,9 @@ import '../../features/settings/domain/llm_provider.dart';
 import '../../features/settings/presentation/ai_providers_screen.dart';
 import '../../features/settings/presentation/provider_form_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/sources/domain/source.dart';
+import '../../features/sources/presentation/source_form_screen.dart';
+import '../../features/sources/presentation/sources_screen.dart';
 
 /// Declarative, deep-linkable navigation.
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -46,6 +49,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'connection',
             name: 'connection',
             builder: (context, state) => const ConnectScreen(),
+          ),
+          GoRoute(
+            path: 'sources',
+            name: 'sources',
+            builder: (context, state) => const SourcesScreen(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: 'source-edit',
+                builder: (context, state) =>
+                    SourceFormScreen(initial: state.extra as Source?),
+              ),
+            ],
           ),
         ],
       ),
