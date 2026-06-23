@@ -10,9 +10,52 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  build-apk:
+    name: Build APK and publish release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "TODO build signed APK and worker image"
-      - run: echo "TODO deploy worker to Azure Container Apps"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter --version
+
+      - name: Generate Android platform folder
+        working-directory: app
+        run: flutter create --platforms=android --org com.pier36 .
+
+      - name: Fetch packages
+        working-directory: app
+        run: flutter pub get
+
+      - name: Build release APK
+        working-directory: app
+        run: flutter build apk --release
+
+      - name: Stage APK
+        working-directory: app
+        run: |
+          mkdir -p ../dist
+          cp build/app/outputs/flutter-apk/app-release.apk ../dist/pier36-${{ github.ref_name }}.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Pier 36 ${{ github.ref_name }}
+          prerelease: true
+          body: |
+            Automated Android APK build for Pier 36 ${{ github.ref_name }}.
+
+            - Runs on mock data (backend wiring pending).
+            - **Debug-signed preview** — install via sideload; not for the Play Store.
+          files: dist/pier36-${{ github.ref_name }}.apk
+          fail_on_unmatched_files: true

@@ -64,4 +64,6 @@ sections exist so we never re-loop on already-decided or already-failed approach
 
 ## Releases
 
-<!-- ## [0.1.0] - YYYY-MM-DD  (cut on first tagged release) -->
+## [0.1.0] - 2026-06-23
+First tagged preview. CI (`release.yml`) builds a **debug-signed Android APK** on a GitHub runner and attaches it
+to the GitHub Release on tag `v0.1.0`. App runs on mock data; worker verified (14 tests; black/ruff/mypy clean).
