@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
 from app.connectors.base import Connector, content_hash
 from app.llm.gateway import LLMGateway
@@ -18,6 +19,7 @@ class ProcessedCard:
     tags: list[str]
     embedding: list[float]
     content_hash: str
+    published_at: datetime | None = None
 
 
 async def ingest(
@@ -48,6 +50,7 @@ async def ingest(
                 tags=summary.tags,
                 embedding=embedding,
                 content_hash=digest,
+                published_at=item.published_at,
             )
         )
 

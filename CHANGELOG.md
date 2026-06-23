@@ -24,6 +24,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 - **AI Providers config UI (Flutter):** Settings → AI Providers — list, add/edit via a dynamic per-type form,
   set default, enable/disable, and test; seeded with the Azure `DefaultAzureCredential` provider. Reachable from a
   settings button on the feed. Unit + widget tested.
+- **End-to-end ingest preview:** worker `POST /ingest/preview` runs connector → LLM gateway → ranking and returns
+  ranked cards as JSON. Hermetic service + endpoint tests; verified live against the arXiv API.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
