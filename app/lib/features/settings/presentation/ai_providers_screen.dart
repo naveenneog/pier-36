@@ -39,11 +39,14 @@ class _ProviderCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(llmProvidersControllerProvider.notifier);
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: AppColors.surface,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadii.lg),
-        border: Border.all(color: AppColors.hairline),
+        side: const BorderSide(color: AppColors.hairline),
       ),
       child: Column(
         children: [
