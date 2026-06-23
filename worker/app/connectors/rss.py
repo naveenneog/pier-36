@@ -1,36 +1,38 @@
-"""RSS/Atom connector — also powers tech blogs and newsletters via feed URLs."""
+"""RSS/Atom connector - also powers tech blogs and newsletters via feed URLs."""
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-from time import mktime
-
 import feedparser
 
-from .base import Connector, RawItem
+from .base import Connector, RawItem, feed_published
 
 
 class RssConnector(Connector):
     source_type = "rss"
 
     async def fetch(self) -> list[RawItem]:
-        url = self.config.get("url")
-        if not url:
+        urls = list(self.config.get("urls") or [])
+        single = self.config.get("url")
+        if single:
+            urls.append(single)
+        if not urls:
             return []
-        parsed = feedparser.parse(url)
+
         items: list[RawItem] = []
-        for entry in parsed.entries:
-            published: datetime | None = None
-            if getattr(entry, "published_parsed", None):
-                published = datetime.fromtimestamp(mktime(entry.published_parsed), tz=UTC)
-            items.append(
-                RawItem(
-                    external_id=entry.get("id", entry.get("link", "")),
-                    url=entry.get("link", ""),
-                    title=entry.get("title", ""),
-                    content=entry.get("summary", ""),
-                    author=entry.get("author"),
-                    published_at=published,
-                )
-            )
+        async with self._http() as client:
+            for url in urls:
+                resp = await client.get(url)
+                resp.raise_for_status()
+                parsed = feedparser.parse(resp.content)
+                for entry in parsed.entries:
+                    items.append(
+                        RawItem(
+                            external_id=entry.get("id", entry.get("link", "")),
+                            url=entry.get("link", ""),
+                            title=entry.get("title", ""),
+                            content=entry.get("summary", ""),
+                            author=entry.get("author"),
+                            published_at=feed_published(entry.get("published_parsed")),
+                        )
+                    )
         return items

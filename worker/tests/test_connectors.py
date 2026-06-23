@@ -24,6 +24,10 @@ def test_build_connector_unknown_raises() -> None:
         build_connector("nope")
 
 
-async def test_stub_fetch_returns_list() -> None:
-    connector = build_connector("github", {"repos": ["flutter/flutter"]})
+@pytest.mark.parametrize(
+    "source_type",
+    ["github", "arxiv", "rss", "blog", "newsletter", "reddit", "notes_git"],
+)
+async def test_empty_config_fetch_returns_empty(source_type: str) -> None:
+    connector = build_connector(source_type, {})
     assert await connector.fetch() == []

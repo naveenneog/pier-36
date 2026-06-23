@@ -19,6 +19,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 - **Startup Seed** feature — curated AI-figures starter packs (follow + adopt interests); cold-start fix.
 - **Two-way Second Brain loop** — promote cards to Git markdown notes; re-ingested into the feed.
 - **Connectors** designed: GitHub, arXiv, RSS/tech-blogs, Reddit, Notes-Git. (X designed, deferred to v2.)
+- **Real connectors implemented:** GitHub (releases), arXiv (Atom API), RSS/blogs over `httpx` with an
+  injectable client; covered by hermetic `httpx.MockTransport` tests.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
