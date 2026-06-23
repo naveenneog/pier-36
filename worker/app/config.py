@@ -25,5 +25,19 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
 
+    # Supabase (clients use the anon key; the worker writes with the service-role key)
+    supabase_url: str | None = None
+    supabase_anon_key: str | None = None
+    supabase_service_role_key: str | None = None
+    database_url: str | None = None
+
+    # GitHub OAuth (entered in the Supabase Auth dashboard; kept here for reference/automation)
+    github_oauth_client_id: str | None = None
+    github_oauth_client_secret: str | None = None
+
+    @property
+    def supabase_configured(self) -> bool:
+        return bool(self.supabase_url and self.supabase_service_role_key)
+
 
 settings = Settings()

@@ -26,6 +26,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
   settings button on the feed. Unit + widget tested.
 - **End-to-end ingest preview:** worker `POST /ingest/preview` runs connector → LLM gateway → ranking and returns
   ranked cards as JSON. Hermetic service + endpoint tests; verified live against the arXiv API.
+- **Config-driven backend:** Supabase + GitHub OAuth keys are read from env (nothing hardcoded); added a
+  `SupabaseRepository` (PostgREST via `httpx`) and `GET /config/status` to verify configuration without exposing
+  secrets.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.

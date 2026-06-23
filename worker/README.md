@@ -20,6 +20,24 @@ Pluggable provider, chosen by `LLM_PROVIDER`:
 
 Azure uses Managed Identity — **no API key stored**. See `.env.example`.
 
+## Backend configuration (Supabase, OAuth)
+
+All integration keys are read from env (`worker/.env`, gitignored) — **nothing is hardcoded**. Fill in:
+
+| Env var | Purpose | Secret? |
+|---|---|---|
+| `SUPABASE_URL` | Project URL | no |
+| `SUPABASE_ANON_KEY` | Client (app) key | low |
+| `SUPABASE_SERVICE_ROLE_KEY` | Worker writes (bypass RLS) | **yes** |
+| `DATABASE_URL` | Optional pooled Postgres string | **yes** |
+| `GITHUB_OAUTH_CLIENT_ID` / `..._SECRET` | GitHub sign-in (entered in the Supabase dashboard) | **yes** |
+
+Verify what the backend picked up (no secrets are ever returned):
+```bash
+curl localhost:8000/config/status
+# {"llm_provider":"fake","supabase_configured":true,"database_configured":false,"github_oauth_configured":true}
+```
+
 ## Layout
 ```
 app/
