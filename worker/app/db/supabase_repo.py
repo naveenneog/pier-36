@@ -68,3 +68,21 @@ class SupabaseRepository:
             )
             resp.raise_for_status()
         return len(rows)
+
+    async def upsert_returning(
+        self, table: str, rows: Sequence[dict], *, on_conflict: str
+    ) -> list[dict]:
+        if not rows:
+            return []
+        headers = self._headers(upsert=True)
+        headers["Prefer"] = "resolution=merge-duplicates,return=representation"
+        async with self._http() as client:
+            resp = await client.post(
+                f"{self._base}/{table}",
+                params={"on_conflict": on_conflict},
+                headers=headers,
+                json=list(rows),
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        return list(data)

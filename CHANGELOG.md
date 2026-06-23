@@ -34,6 +34,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
   mode when not connected. Tested (connection repo + connect screen).
 - **Android OAuth deep-link:** the release build injects the `io.pier36.app://login-callback/` intent-filter into
   the manifest (`app/tool/inject_deeplink.py`) so GitHub sign-in completes in the APK.
+- **Worker persistence:** `POST /ingest/run` fetches → summarizes → ranks → **persists** to Supabase
+  (`cards` upserted by `content_hash`, then per-user `feed_ranked`) via `SupabasePersistence`. New migration
+  `0003_cards_readmodel.sql` denormalizes `cards` into a read model. Hermetic tests.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
