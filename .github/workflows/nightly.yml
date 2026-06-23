@@ -1,9 +1,9 @@
 name: Nightly
 
 on:
-  schedule:
-    - cron: '0 3 * * *'   # 03:00 UTC daily
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
 
 jobs:
   e2e:
@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "TODO: Patrol e2e on Android emulator matrix (onboarding → seed → feed → save-to-brain)"
+      - run: echo "TODO Patrol e2e on Android emulator matrix"
 
   load:
-    name: Load / latency (k6)
+    name: Load and latency k6
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "TODO: k6 against staging; assert feed read p95 < 150ms, action commit p95 < 200ms"
+      - run: echo "TODO k6 against staging assert feed read p95 under 150ms"
