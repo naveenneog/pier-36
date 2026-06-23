@@ -32,6 +32,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 - **In-app Supabase connect + GitHub sign-in (Flutter):** click-through setup — paste URL/anon key once (stored,
   auto-reconnects), then Continue with GitHub. All `supabase_flutter` usage isolated in `SupabaseService`; demo
   mode when not connected. Tested (connection repo + connect screen).
+- **Android OAuth deep-link:** the release build injects the `io.pier36.app://login-callback/` intent-filter into
+  the manifest (`app/tool/inject_deeplink.py`) so GitHub sign-in completes in the APK.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.

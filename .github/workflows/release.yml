@@ -36,6 +36,10 @@ jobs:
         working-directory: app
         run: flutter pub get
 
+      - name: Inject OAuth deep-link into Android manifest
+        working-directory: app
+        run: python3 tool/inject_deeplink.py
+
       - name: Build release APK
         working-directory: app
         run: flutter build apk --release
@@ -55,7 +59,8 @@ jobs:
           body: |
             Automated Android APK build for Pier 36 ${{ github.ref_name }}.
 
-            - Runs on mock data (backend wiring pending).
+            - Connect your Supabase project in-app (Settings → Backend connection), then sign in with GitHub.
+            - Feed runs on mock data until live persistence is wired.
             - **Debug-signed preview** — install via sideload; not for the Play Store.
           files: dist/pier36-${{ github.ref_name }}.apk
           fail_on_unmatched_files: true

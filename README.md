@@ -61,7 +61,8 @@ The backend is **config-driven** — nothing is hardcoded. To connect a real Sup
 1. **Create a Supabase project** (free tier is fine) at [supabase.com](https://supabase.com).
 2. **Enable GitHub auth:** in the dashboard, **Auth → Providers → GitHub**, paste the **Client ID/Secret** from a
    [GitHub OAuth App](https://github.com/settings/developers) (Authorization callback URL:
-   `https://<ref>.supabase.co/auth/v1/callback`).
+   `https://<ref>.supabase.co/auth/v1/callback`). Then under **Auth → URL Configuration → Redirect URLs**, add
+   `io.pier36.app://login-callback/` so the mobile app can complete sign-in.
 3. **Apply the schema:** run `supabase/migrations/0001_init.sql` then `0002_seed_catalog.sql` in the SQL Editor
    (or `supabase db push`).
 4. **Add keys to `worker/.env`** (gitignored — never commit secrets):
