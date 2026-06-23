@@ -1,0 +1,65 @@
+# Changelog
+
+All notable changes, **decisions**, and **attempts** for this project are recorded here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
+[Semantic Versioning](https://semver.org/). The **Decision Log** and **Attempts & Learnings**
+sections exist so we never re-loop on already-decided or already-failed approaches.
+
+> How to use: every meaningful change goes under `[Unreleased]`. Record *why* in the Decision Log,
+> and record dead-ends/experiments in Attempts & Learnings (even if reverted). Cut a version on release.
+
+---
+
+## [Unreleased]
+
+### Added
+- **HLD** `design-doc.md` — vision, architecture, data model, features, roadmap.
+- **LLD** `lld-design.md` — design patterns, latency strategy, design system + gradients, API contracts,
+  sequence diagrams, testing strategy, CI/CD & GitHub workflow.
+- **Startup Seed** feature — curated AI-figures starter packs (follow + adopt interests); cold-start fix.
+- **Two-way Second Brain loop** — promote cards to Git markdown notes; re-ingested into the feed.
+- **Connectors** designed: GitHub, arXiv, RSS/tech-blogs, Reddit, Notes-Git. (X designed, deferred to v2.)
+- **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
+- **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
+- **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
+
+### Changed
+- (none yet)
+
+### Deferred / Out-of-scope (for now)
+- **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
+- Semantic ranking (pgvector), "Ask your brain" RAG, orgs/teams, iOS release → later phases.
+
+---
+
+## Decision Log
+
+| Date       | Decision                                                        | Rationale                                                      | Alternatives considered                |
+|------------|-----------------------------------------------------------------|---------------------------------------------------------------|----------------------------------------|
+| 2026-06-23 | Scope: small users now, **cloud-native & horizontally scalable**| Future-proof without over-building                            | Single-box monolith                    |
+| 2026-06-23 | **Curated multi-source aggregator** (notes+GitHub+arXiv+RSS…)   | Highest-value version of the idea                             | Single-source readers                  |
+| 2026-06-23 | **Hybrid cards** (AI short + tap-to-expand)                     | Glanceable yet deep; enables embeddings later                 | Raw excerpts; full AI rewrite          |
+| 2026-06-23 | **Supabase** (Postgres+pgvector, Auth, Storage, Realtime, RLS)  | Open, scalable, great DX, semantic search built-in            | Firebase; self-hosted stack            |
+| 2026-06-23 | **Flutter** client                                              | One codebase, iOS-ready, superb gesture/animation             | Native Kotlin; KMP; React Native       |
+| 2026-06-23 | **LLM Gateway**, default **Azure `DefaultAzureCredential`**     | Matches user's actual access; pluggable for others            | Hosted-API-only; self-hosted-only      |
+| 2026-06-23 | Notes source-of-truth in **Git/GitHub** (markdown)              | Open, versioned, free; enables write-back loop                | DB-only notes                          |
+| 2026-06-23 | **X deferred to v2**; Reddit + tech-blogs lead MVP              | Avoid blocking MVP on paid/rate-limited X API                 | X in MVP                               |
+| 2026-06-23 | **Riverpod** + **go_router** + Clean Architecture (LLD)         | Reactive DI/state, testable layers, simple nav                | Bloc; Provider; GetX                   |
+| 2026-06-23 | **CQRS-lite materialized `feed_ranked`** for reads              | Sub-150ms feed reads; ranking precomputed at write time       | Rank-on-read                           |
+| 2026-06-23 | **Keyset (cursor) pagination** + client prefetch                | Stable, fast infinite scroll; no offset drift                 | Offset pagination                      |
+| 2026-06-23 | **App name: Pier 36** (repo `pier-36`, Dart pkg `pier_36`, class `Pier36App`) | Chosen product name           | Synapse, Cortex, Pulse, Recall, NeuroReel, BrainFeed |
+
+---
+
+## Attempts & Learnings
+> Record experiments and dead-ends here during the build so we don't repeat them.
+
+| Date       | Attempt | Outcome | Learning / Next |
+|------------|---------|---------|-----------------|
+| _(build phase)_ | _e.g., "tried offset pagination for feed"_ | _e.g., "drifted on inserts"_ | _"switched to keyset cursor"_ |
+
+---
+
+## Releases
+
+<!-- ## [0.1.0] - YYYY-MM-DD  (cut on first tagged release) -->

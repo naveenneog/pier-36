@@ -1,0 +1,25 @@
+# lefthook.yml — pre-commit quality gates (install: https://github.com/evilmartians/lefthook)
+pre-commit:
+  parallel: true
+  commands:
+    dart-format:
+      root: app/
+      glob: "*.dart"
+      run: dart format --set-exit-if-changed {staged_files}
+    dart-analyze:
+      root: app/
+      glob: "*.dart"
+      run: flutter analyze
+    ruff:
+      root: worker/
+      glob: "*.py"
+      run: ruff check {staged_files}
+    black:
+      root: worker/
+      glob: "*.py"
+      run: black --check {staged_files}
+
+commit-msg:
+  commands:
+    conventional-commit:
+      run: 'grep -Eq "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?!?: .+" {1} || (echo "Commit must follow Conventional Commits" && exit 1)'

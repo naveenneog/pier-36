@@ -1,0 +1,44 @@
+# ── OS / editor ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+*.iml
+
+# ── Secrets / env ──────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Flutter / Dart (app/) ──────────────────────────────────
+**/.dart_tool/
+**/build/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.pub-cache/
+app/coverage/
+*.g.dart
+*.freezed.dart
+# Platform folders are generated via `flutter create .` — keep only their build output out:
+app/**/Pods/
+app/**/.gradle/
+
+# ── Python / worker (worker/) ──────────────────────────────
+**/__pycache__/
+*.pyc
+worker/.venv/
+worker/.pytest_cache/
+worker/.mypy_cache/
+worker/.ruff_cache/
+worker/dist/
+worker/*.egg-info/
+worker/.coverage
+worker/htmlcov/
+
+# ── Node (tooling only) ────────────────────────────────────
+node_modules/
+
+# ── Supabase ───────────────────────────────────────────────
+supabase/.branches/
+supabase/.temp/

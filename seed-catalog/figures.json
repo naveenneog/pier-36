@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "note": "Open, community-editable catalog of major AI figures. Verify handles/feeds before production use.",
+  "packs": [
+    {
+      "slug": "frontier-labs-llms",
+      "title": "Frontier Labs & LLMs",
+      "sort": 1,
+      "figures": [
+        {
+          "name": "Andrej Karpathy",
+          "bio": "LLMs, neural nets, education",
+          "x_handle": "@karpathy",
+          "blog_rss": "https://karpathy.github.io/feed.xml",
+          "github_login": "karpathy",
+          "topics": ["LLMs", "Neural Nets", "Education"]
+        },
+        {
+          "name": "Ilya Sutskever",
+          "bio": "Deep learning, AGI safety",
+          "x_handle": "@ilyasut",
+          "topics": ["Deep Learning", "AGI"]
+        },
+        {
+          "name": "Jeff Dean",
+          "bio": "Systems & ML at Google",
+          "x_handle": "@JeffDean",
+          "github_login": "jeffdean",
+          "topics": ["Systems", "ML Infra"]
+        }
+      ]
+    },
+    {
+      "slug": "deep-learning-pioneers",
+      "title": "Deep Learning Pioneers",
+      "sort": 2,
+      "figures": [
+        {
+          "name": "Yann LeCun",
+          "bio": "CNNs, self-supervised learning",
+          "x_handle": "@ylecun",
+          "topics": ["CNNs", "SSL"]
+        },
+        {
+          "name": "Geoffrey Hinton",
+          "bio": "Backprop, deep learning",
+          "topics": ["Deep Learning", "Theory"]
+        },
+        {
+          "name": "Fei-Fei Li",
+          "bio": "Computer vision, ImageNet",
+          "x_handle": "@drfeifei",
+          "topics": ["Vision", "AI4Good"]
+        }
+      ]
+    },
+    {
+      "slug": "ai-leaders-founders",
+      "title": "AI Leaders & Founders",
+      "sort": 3,
+      "figures": [
+        {
+          "name": "Demis Hassabis",
+          "bio": "DeepMind; AGI research",
+          "x_handle": "@demishassabis",
+          "topics": ["AGI", "Research"]
+        },
+        {
+          "name": "Sam Altman",
+          "bio": "OpenAI",
+          "x_handle": "@sama",
+          "topics": ["AI Strategy", "LLMs"]
+        }
+      ]
+    },
+    {
+      "slug": "educators-builders",
+      "title": "Educators & Builders",
+      "sort": 4,
+      "figures": [
+        {
+          "name": "Andrew Ng",
+          "bio": "ML education, applied AI",
+          "x_handle": "@AndrewYNg",
+          "topics": ["ML", "Education"]
+        },
+        {
+          "name": "Jeremy Howard",
+          "bio": "fast.ai, practical deep learning",
+          "x_handle": "@jeremyphoward",
+          "github_login": "jph00",
+          "topics": ["fast.ai", "DL"]
+        },
+        {
+          "name": "François Chollet",
+          "bio": "Keras; abstraction & reasoning",
+          "x_handle": "@fchollet",
+          "github_login": "fchollet",
+          "topics": ["Keras", "Reasoning"]
+        }
+      ]
+    }
+  ]
+}

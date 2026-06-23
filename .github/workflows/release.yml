@@ -1,0 +1,17 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "TODO: build signed APK + worker container image"
+      - run: echo "TODO: deploy worker to Azure Container Apps (Managed Identity)"
+      - run: echo "TODO: finalize CHANGELOG section for ${{ github.ref_name }}"
