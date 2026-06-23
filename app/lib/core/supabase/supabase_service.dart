@@ -15,26 +15,26 @@ class SupabaseService {
     initialized = true;
   }
 
-  static SupabaseClient get _client => Supabase.instance.client;
+  static SupabaseClient get client => Supabase.instance.client;
 
-  static User? get currentUser => initialized ? _client.auth.currentUser : null;
+  static User? get currentUser => initialized ? client.auth.currentUser : null;
 
   static bool get isSignedIn => currentUser != null;
 
   static StreamSubscription<AuthState>? listenAuth(void Function() onChange) {
     if (!initialized) return null;
-    return _client.auth.onAuthStateChange.listen((_) => onChange());
+    return client.auth.onAuthStateChange.listen((_) => onChange());
   }
 
   static Future<void> signInWithGitHub() async {
     if (!initialized) return;
-    await _client.auth.signInWithOAuth(
+    await client.auth.signInWithOAuth(
       OAuthProvider.github,
       redirectTo: 'io.pier36.app://login-callback/',
     );
   }
 
   static Future<void> signOut() async {
-    if (initialized) await _client.auth.signOut();
+    if (initialized) await client.auth.signOut();
   }
 }

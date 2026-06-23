@@ -3,6 +3,30 @@ import 'package:flutter/foundation.dart';
 /// Source a card originates from. Drives the topic gradient identity.
 enum SourceType { notes, github, arxiv, blog, reddit, x, newsletter }
 
+/// Maps a stored source-type string (from the worker/db) to a [SourceType].
+SourceType sourceTypeFromName(String? name) {
+  switch (name) {
+    case 'github':
+      return SourceType.github;
+    case 'arxiv':
+      return SourceType.arxiv;
+    case 'blog':
+    case 'rss':
+      return SourceType.blog;
+    case 'reddit':
+      return SourceType.reddit;
+    case 'x':
+      return SourceType.x;
+    case 'newsletter':
+      return SourceType.newsletter;
+    case 'notes':
+    case 'notes_git':
+      return SourceType.notes;
+    default:
+      return SourceType.notes;
+  }
+}
+
 /// A single, glanceable feed item (hybrid: short summary up front, long on expand).
 @immutable
 class FeedCard {

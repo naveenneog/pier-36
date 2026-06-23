@@ -1,13 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/presentation/auth_controller.dart';
 import '../data/mock_feed_repository.dart';
+import '../data/supabase_feed_repository.dart';
 import '../domain/entities/feed_card.dart';
 import '../domain/repositories/feed_repository.dart';
 
-/// Swap this provider's implementation to wire a real backend later.
-final feedRepositoryProvider = Provider<FeedRepository>(
-  (ref) => MockFeedRepository(),
-);
+/// Live feed when signed in to Supabase; mock demo otherwise.
+final feedRepositoryProvider = Provider<FeedRepository>((ref) {
+  final auth = ref.watch(authControllerProvider);
+  return auth.signedIn ? SupabaseFeedRepository() : MockFeedRepository();
+});
 
 final feedControllerProvider =
     StateNotifierProvider<FeedController, FeedState>((ref) {
