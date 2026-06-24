@@ -41,6 +41,10 @@ sections exist so we never re-loop on already-decided or already-failed approach
   (`SupabaseFeedRepository`); falls back to the mock demo when not connected. Source-type mapping is unit-tested.
 - **Sources management UI (Flutter):** add/edit/enable/delete GitHub/arXiv/RSS/Reddit/Notes sources via a dynamic
   per-type form; persists to the Supabase `sources` table when signed in (mock demo otherwise). Tested.
+- **Auto-ingest scheduler (worker):** iterate every user's enabled sources → ingest → persist. `POST
+  /ingest/scheduler/run` plus a config-gated in-process interval loop (`SCHEDULER_ENABLED`). Hermetic tests.
+- **Worker deployed to Azure Container Apps** (eastus2; eastus was at capacity): cloud-built via ACR build, live at
+  the ACA FQDN. The in-process scheduler runs with `min-replicas >= 1`. See `infra/README.md`.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.

@@ -1,29 +1,43 @@
 # infra — Pier 36
 
-Infrastructure notes (IaC to be added as Bicep/Terraform).
+The worker runs on **Azure Container Apps**. The image is cloud-built with **ACR build** (no local Docker).
 
-## Targets
-- **Worker** → **Azure Container Apps** (scale-to-zero; KEDA scale on queue length). Auth to Azure OpenAI via
-  **Managed Identity** (`DefaultAzureCredential`) — no secrets in the image.
-- **Secrets** → **Azure Key Vault** (LLM keys for non-Azure providers, connector tokens), referenced by id.
-- **Data/Auth/Realtime/Storage** → **Supabase** (managed Postgres + pgvector).
-- **Push** → **Firebase Cloud Messaging (FCM)** for daily digests / breaking updates.
+## Live deployment
+- Resource group: `pier36-rg`
+- ACR: `caa5010066c2acr` (Basic, admin-enabled)
+- Environment: `pier36-cae` (**eastus2** — eastus was at capacity: ManagedEnvironmentCapacityHeavyUsageError)
+- App: `pier36-worker`
+  - https://pier36-worker.agreeablerock-237012fd.eastus2.azurecontainerapps.io
+  - `GET /health`, `GET /config/status`, `POST /ingest/preview|run|scheduler/run`
+- Replicas: min 1, max 3 (min >= 1 so the in-process scheduler can run).
 
-## Deploy (sketch)
+## Deploy / redeploy (no local Docker)
 ```bash
-# Build & push the worker image
-docker build -t <registry>/pier36-worker:latest worker
-docker push <registry>/pier36-worker:latest
+ACR=caa5010066c2acr
+az acr build -r $ACR -t pier36-worker:v1 worker          # cloud build from worker/Dockerfile
+az containerapp update -n pier36-worker -g pier36-rg --image $ACR.azurecr.io/pier36-worker:v1
+```
 
-# Create/Update the Container App (assign a managed identity with Cognitive Services OpenAI User role)
-az containerapp up \
-  --name pier36-worker \
-  --resource-group pier36-rg \
-  --image <registry>/pier36-worker:latest \
-  --env-vars LLM_PROVIDER=azure AZURE_OPENAI_ENDPOINT=<endpoint> AZURE_OPENAI_DEPLOYMENT=<deployment>
+## Enable Supabase + the scheduler
+```bash
+az containerapp secret set -n pier36-worker -g pier36-rg --secrets supabase-key=<SERVICE_ROLE_KEY>
+az containerapp update -n pier36-worker -g pier36-rg \
+  --set-env-vars SUPABASE_URL=https://<ref>.supabase.co \
+                 SUPABASE_SERVICE_ROLE_KEY=secretref:supabase-key \
+                 SCHEDULER_ENABLED=true SCHEDULER_INTERVAL_SECONDS=3600
+```
+
+## Azure OpenAI via Managed Identity (real summaries)
+```bash
+az containerapp identity assign -n pier36-worker -g pier36-rg --system-assigned
+PRINCIPAL=$(az containerapp show -n pier36-worker -g pier36-rg --query identity.principalId -o tsv)
+az role assignment create --assignee $PRINCIPAL \
+  --role "Cognitive Services OpenAI User" --scope <AZURE_OPENAI_RESOURCE_ID>
+az containerapp update -n pier36-worker -g pier36-rg \
+  --set-env-vars LLM_PROVIDER=azure AZURE_OPENAI_ENDPOINT=https://<res>.openai.azure.com \
+                 AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
 ```
 
 ## TODO
-- [ ] `main.bicep` for resource group, Container App, Key Vault, managed identity + role assignment.
-- [ ] GitHub OIDC → Azure for keyless CI deploys (no stored cloud creds).
-- [ ] Supabase project provisioning + migration step in `release.yml`.
+- [ ] GitHub OIDC -> Azure for keyless CI deploys (federated credential + a deploy-worker.yml workflow).
+- [ ] main.bicep for fully reproducible IaC.
