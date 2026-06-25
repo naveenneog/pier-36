@@ -66,6 +66,11 @@ sections exist so we never re-loop on already-decided or already-failed approach
   so fixing a mistyped Project URL after a first connect silently kept the old client (OAuth then opened a
   dead URL → "this site can't be reached"). The app now tracks the initialized URL and tells the user to
   fully close and reopen Pier 36 to apply a changed connection (startup auto-reconnect picks up the new URL).
+- **OAuth failures no longer crash the app.** A failed/expired/cancelled GitHub code-exchange made
+  `supabase_flutter` rethrow an *uncaught* `AuthException` from its deep-link handler. Added a targeted guard
+  (`PlatformDispatcher.onError`) that swallows only `AuthException`s and lets all other errors report normally.
+  Verified on an Android emulator: the OAuth deep link is received, the PKCE exchange runs, and a failure is
+  now logged-and-handled instead of surfacing as an unhandled exception.
 
 ### Deferred / Out-of-scope (for now)
 - **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
@@ -108,6 +113,7 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-25 | Set the ACA secret/env vars to wire Supabase | `az` token had **expired between sessions** | Re-login via browser `az login --tenant <id>`; token expiry is recurring — expect to re-auth each session |
 | 2026-06-25 | Live device test of GitHub sign-in: edited a mistyped Project URL, retried | OAuth opened a dead URL → "this site can't be reached" (no GitHub page) | `supabase_flutter` inits **once per process**; the corrected URL only applies after a full app restart. Added a restart hint + auto-reconnect from saved config |
 | 2026-06-25 | Completed GitHub auth on device; redirect reopened the app | go_router threw `no routes for location: io.pier36.app://login-callback/?code=...` | go_router also receives the custom-scheme callback and has no match. Added `onException` → `/feed`; supabase handles the code-exchange independently |
+| 2026-06-25 | Built + ran the app on a real Android emulator (API 34) to test GitHub login | (a) `flutter create` android, JDK 17 for Gradle; (b) simulated the OAuth callback via `adb am start` | Confirmed `signInWithOAuth` opens the correct authorize URL and the deep link is received; a *failed* exchange threw an **uncaught** `AuthException` → added `PlatformDispatcher.onError` guard. Emulator `input tap` Y is scaled (~0.77×) vs screencap, so taps need compensation |
 
 ---
 

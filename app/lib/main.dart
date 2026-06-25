@@ -8,6 +8,7 @@ import 'features/connection/data/connection_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _tryAutoConnect();
+  SupabaseService.installAuthErrorGuard();
   runApp(const ProviderScope(child: Pier36App()));
 }
 

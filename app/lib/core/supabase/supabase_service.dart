@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// The single place that touches `supabase_flutter`. Everything else goes
@@ -44,5 +46,20 @@ class SupabaseService {
 
   static Future<void> signOut() async {
     if (initialized) await client.auth.signOut();
+  }
+
+  /// supabase_flutter rethrows OAuth deep-link / code-exchange failures (e.g. an
+  /// expired, reused, or cancelled GitHub login) as *uncaught* async errors,
+  /// which would otherwise crash the app. Swallow only `AuthException`s here and
+  /// let every other error propagate to Flutter's normal reporting.
+  static void installAuthErrorGuard() {
+    final previous = PlatformDispatcher.instance.onError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      if (error is AuthException) {
+        debugPrint('Supabase auth error (handled): ${error.message}');
+        return true;
+      }
+      return previous?.call(error, stack) ?? false;
+    };
   }
 }
