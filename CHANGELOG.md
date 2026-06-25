@@ -45,6 +45,10 @@ sections exist so we never re-loop on already-decided or already-failed approach
   /ingest/scheduler/run` plus a config-gated in-process interval loop (`SCHEDULER_ENABLED`). Hermetic tests.
 - **Worker deployed to Azure Container Apps** (eastus2; eastus was at capacity): cloud-built via ACR build, live at
   the ACA FQDN. The in-process scheduler runs with `min-replicas >= 1`. See `infra/README.md`.
+- **Live Supabase wiring (production):** the ACA worker is configured with the real project URL + `sb_secret_`
+  service key (stored as an ACA secret) and `SCHEDULER_ENABLED=true` (hourly). Schema applied to the project;
+  verified end-to-end — `GET /config/status` → `supabase_configured:true` and `POST /ingest/scheduler/run` →
+  `{"sources":0,"cards":0}` (200). Backend is now ready for sign-in + sources.
 - **LLM Gateway** — pluggable provider abstraction; default Azure OpenAI via `DefaultAzureCredential`; config UI.
 - **Design system** — dark-first palette + signature gradients (Aurora/Pulse/Mint/Solar/Frost/Nebula).
 - **Testing strategy** — unit/widget/golden/integration/contract/load + GitHub Actions CI gates.
@@ -74,6 +78,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-23 | **CQRS-lite materialized `feed_ranked`** for reads              | Sub-150ms feed reads; ranking precomputed at write time       | Rank-on-read                           |
 | 2026-06-23 | **Keyset (cursor) pagination** + client prefetch                | Stable, fast infinite scroll; no offset drift                 | Offset pagination                      |
 | 2026-06-23 | **App name: Pier 36** (repo `pier-36`, Dart pkg `pier_36`, class `Pier36App`) | Chosen product name           | Synapse, Cortex, Pulse, Recall, NeuroReel, BrainFeed |
+| 2026-06-25 | Worker→Supabase auth uses the new **`sb_secret_`** service key via PostgREST `apikey`+`Bearer` headers | Confirmed working in prod (no 401; 404 only when a table was missing) | Legacy JWT `service_role` key |
+| 2026-06-25 | Apply DDL through the **Supabase SQL editor** (combined migrations file) | Direct DB host `db.<ref>.supabase.co:5432` is **IPv6-only/unreachable** here and no `psql`/`supabase` CLI is installed | psql; `supabase db push`; Management API (needs a PAT) |
 
 ---
 
@@ -87,6 +93,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-23 | `StoryCard.build` read `feedControllerProvider.notifier` | Widget test left a pending 250ms timer (mock load) → test failure | Moved provider reads into button callbacks (no build-time load) |
 | 2026-06-23 | `_ProviderCard` wrapped a `ListTile` in a `Container` with a background color | Flutter threw a debug assertion → widget test failed | Use a Material `Card` for tiles that need a background |
 | 2026-06-23 | `Supabase.initialize(anonKey:)` in the app | `flutter analyze` is strict (fails on **infos**); `anonKey` is deprecated | Use `publishableKey:`; keep app code info-clean |
+| 2026-06-25 | First `POST /ingest/scheduler/run` after wiring the real project | 500 → `httpx` **404** on `/rest/v1/sources` | Tables weren't created yet; the `sb_secret_` key auth'd fine (404, not 401). Applied combined migrations in the SQL editor → clean `{"sources":0,"cards":0}` |
+| 2026-06-25 | Set the ACA secret/env vars to wire Supabase | `az` token had **expired between sessions** | Re-login via browser `az login --tenant <id>`; token expiry is recurring — expect to re-auth each session |
 
 ---
 
