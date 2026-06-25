@@ -56,6 +56,17 @@ sections exist so we never re-loop on already-decided or already-failed approach
 ### Changed
 - (none yet)
 
+### Fixed
+- **GitHub sign-in completes in the APK.** The Supabase OAuth deep link
+  (`io.pier36.app://login-callback/?code=...`) reopened the app but crashed go_router with
+  *"no routes for location"*. Added `GoRouter.onException` to swallow the callback and land on the feed;
+  `supabase_flutter` performs the PKCE code-exchange via its own deep-link handler, which flips the auth
+  state and switches the feed to the live Supabase repository.
+- **Corrected Supabase URL now takes effect.** `supabase_flutter` can only `initialize` once per process,
+  so fixing a mistyped Project URL after a first connect silently kept the old client (OAuth then opened a
+  dead URL → "this site can't be reached"). The app now tracks the initialized URL and tells the user to
+  fully close and reopen Pier 36 to apply a changed connection (startup auto-reconnect picks up the new URL).
+
 ### Deferred / Out-of-scope (for now)
 - **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
 - Semantic ranking (pgvector), "Ask your brain" RAG, orgs/teams, iOS release → later phases.
@@ -95,6 +106,8 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-23 | `Supabase.initialize(anonKey:)` in the app | `flutter analyze` is strict (fails on **infos**); `anonKey` is deprecated | Use `publishableKey:`; keep app code info-clean |
 | 2026-06-25 | First `POST /ingest/scheduler/run` after wiring the real project | 500 → `httpx` **404** on `/rest/v1/sources` | Tables weren't created yet; the `sb_secret_` key auth'd fine (404, not 401). Applied combined migrations in the SQL editor → clean `{"sources":0,"cards":0}` |
 | 2026-06-25 | Set the ACA secret/env vars to wire Supabase | `az` token had **expired between sessions** | Re-login via browser `az login --tenant <id>`; token expiry is recurring — expect to re-auth each session |
+| 2026-06-25 | Live device test of GitHub sign-in: edited a mistyped Project URL, retried | OAuth opened a dead URL → "this site can't be reached" (no GitHub page) | `supabase_flutter` inits **once per process**; the corrected URL only applies after a full app restart. Added a restart hint + auto-reconnect from saved config |
+| 2026-06-25 | Completed GitHub auth on device; redirect reopened the app | go_router threw `no routes for location: io.pier36.app://login-callback/?code=...` | go_router also receives the custom-scheme callback and has no match. Added `onException` → `/feed`; supabase handles the code-exchange independently |
 
 ---
 

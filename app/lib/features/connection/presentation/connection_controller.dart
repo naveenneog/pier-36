@@ -32,10 +32,12 @@ class ConnectionController extends StateNotifier<ConnectionState> {
     state = ConnectionState(loading: false, config: config);
   }
 
-  Future<void> save(SupabaseConfig config) async {
+  Future<bool> save(SupabaseConfig config) async {
     await _repo.save(config);
+    final restartRequired = SupabaseService.restartRequiredFor(config.url);
     await SupabaseService.init(config.url, config.anonKey);
     state = ConnectionState(loading: false, config: config);
+    return restartRequired;
   }
 
   Future<void> disconnect() async {

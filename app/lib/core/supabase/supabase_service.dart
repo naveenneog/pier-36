@@ -8,12 +8,20 @@ class SupabaseService {
   SupabaseService._();
 
   static bool initialized = false;
+  static String? initializedUrl;
 
   static Future<void> init(String url, String anonKey) async {
     if (initialized) return;
     await Supabase.initialize(url: url, publishableKey: anonKey);
     initialized = true;
+    initializedUrl = url;
   }
+
+  /// supabase_flutter can only initialize once per process. If a *different*
+  /// URL is saved after the client has already booted, the new connection only
+  /// takes effect after a full app restart (handled by `_tryAutoConnect`).
+  static bool restartRequiredFor(String url) =>
+      initialized && initializedUrl != null && initializedUrl != url;
 
   static SupabaseClient get client => Supabase.instance.client;
 

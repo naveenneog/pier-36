@@ -16,6 +16,13 @@ import '../../features/sources/presentation/sources_screen.dart';
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/feed',
+    onException: (context, state, router) {
+      // The Supabase GitHub OAuth deep link
+      // (io.pier36.app://login-callback/?code=...) is consumed by
+      // supabase_flutter to complete sign-in; go_router has no route for it.
+      // Swallow the unmatched location and land on the (now signed-in) feed.
+      router.go('/feed');
+    },
     routes: [
       GoRoute(
         path: '/feed',

@@ -35,12 +35,18 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
     setState(() => _saving = true);
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await ref
+      final restartRequired = await ref
           .read(connectionControllerProvider.notifier)
           .save(SupabaseConfig(url: url, anonKey: anon));
       if (!mounted) return;
       messenger.showSnackBar(
-        const SnackBar(content: Text('Connected to Supabase')),
+        SnackBar(
+          content: Text(
+            restartRequired
+                ? 'Saved. Fully close and reopen Pier 36 to apply the new connection.'
+                : 'Connected to Supabase',
+          ),
+        ),
       );
       context.pop();
     } catch (e) {
