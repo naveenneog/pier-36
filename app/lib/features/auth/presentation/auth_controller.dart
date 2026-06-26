@@ -30,6 +30,7 @@ class AuthController extends StateNotifier<AuthStatus> {
 
   void _refresh() {
     final user = SupabaseService.currentUser;
+    if (user != null) SupabaseService.lastAuthError.value = null;
     state = AuthStatus(signedIn: user != null, email: user?.email);
   }
 

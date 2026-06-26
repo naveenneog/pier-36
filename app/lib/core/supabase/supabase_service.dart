@@ -11,9 +11,23 @@ class SupabaseService {
   static bool initialized = false;
   static String? initializedUrl;
 
+  /// The most recent OAuth/auth failure message, surfaced in the UI so sign-in
+  /// problems are visible instead of silently swallowed. Cleared on success.
+  static final ValueNotifier<String?> lastAuthError = ValueNotifier<String?>(null);
+
   static Future<void> init(String url, String anonKey) async {
     if (initialized) return;
-    await Supabase.initialize(url: url, publishableKey: anonKey);
+    await Supabase.initialize(
+      url: url,
+      publishableKey: anonKey,
+      // Use the implicit OAuth flow: the provider redirect carries the session
+      // tokens directly in the URL fragment, so there is no PKCE code-exchange.
+      // The PKCE exchange was failing on real devices ("flow state not found")
+      // even though the GitHub login succeeded server-side.
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.implicit,
+      ),
+    );
     initialized = true;
     initializedUrl = url;
   }
@@ -56,6 +70,9 @@ class SupabaseService {
     PlatformDispatcher.instance.onError = (error, stack) {
       if (error is AuthException) {
         debugPrint('Supabase auth error (handled): ${error.message}');
+        lastAuthError.value = error.statusCode != null
+            ? '${error.message} (status ${error.statusCode})'
+            : error.message;
         return true;
       }
       return previous?.call(error, stack) ?? false;

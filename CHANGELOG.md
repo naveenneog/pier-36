@@ -71,6 +71,12 @@ sections exist so we never re-loop on already-decided or already-failed approach
   (`PlatformDispatcher.onError`) that swallows only `AuthException`s and lets all other errors report normally.
   Verified on an Android emulator: the OAuth deep link is received, the PKCE exchange runs, and a failure is
   now logged-and-handled instead of surfacing as an unhandled exception.
+- **GitHub sign-in now completes on real devices (PKCE → implicit flow).** Supabase Auth logs proved the
+  provider login *succeeded* server-side (`action=login`, `status=302`) yet the app stayed signed out — the
+  client-side **PKCE code-exchange** was failing ("flow state not found") after the redirect. Switched
+  `Supabase.initialize` to `AuthFlowType.implicit`, so the session tokens come back in the redirect fragment
+  and no code-exchange is needed. Also surfaced the last auth error on the Settings screen so failures are
+  never silent again.
 
 ### Deferred / Out-of-scope (for now)
 - **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
@@ -114,6 +120,7 @@ sections exist so we never re-loop on already-decided or already-failed approach
 | 2026-06-25 | Live device test of GitHub sign-in: edited a mistyped Project URL, retried | OAuth opened a dead URL → "this site can't be reached" (no GitHub page) | `supabase_flutter` inits **once per process**; the corrected URL only applies after a full app restart. Added a restart hint + auto-reconnect from saved config |
 | 2026-06-25 | Completed GitHub auth on device; redirect reopened the app | go_router threw `no routes for location: io.pier36.app://login-callback/?code=...` | go_router also receives the custom-scheme callback and has no match. Added `onException` → `/feed`; supabase handles the code-exchange independently |
 | 2026-06-25 | Built + ran the app on a real Android emulator (API 34) to test GitHub login | (a) `flutter create` android, JDK 17 for Gradle; (b) simulated the OAuth callback via `adb am start` | Confirmed `signInWithOAuth` opens the correct authorize URL and the deep link is received; a *failed* exchange threw an **uncaught** `AuthException` → added `PlatformDispatcher.onError` guard. Emulator `input tap` Y is scaled (~0.77×) vs screencap, so taps need compensation |
+| 2026-06-26 | Real-device GitHub login still "bounced back to app, not signed in" | Read Supabase **Auth logs**: `action=login, provider=github, status=302` (server success) while the app stayed signed out | The failure is the **client PKCE code-exchange** (`flow_state_not_found`), not config. Fix: switch to `AuthFlowType.implicit` (tokens in the redirect fragment, no exchange). Server-side success in the logs was the key signal that isolated client vs server |
 
 ---
 

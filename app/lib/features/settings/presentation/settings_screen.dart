@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../design_system/tokens.dart';
+import '../../../core/supabase/supabase_service.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../connection/presentation/connection_controller.dart';
 
@@ -70,6 +71,22 @@ class SettingsScreen extends ConsumerWidget {
                       label: const Text('Continue with GitHub'),
                     ),
             ),
+          ValueListenableBuilder<String?>(
+            valueListenable: SupabaseService.lastAuthError,
+            builder: (context, err, _) {
+              if (err == null) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Text(
+                  'Last sign-in error: $err',
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
