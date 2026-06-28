@@ -6,6 +6,10 @@ import hashlib
 
 from .base import LLMProvider, Summary
 
+# The `cards.embedding` column is `vector(1536)`; emit a deterministic vector of
+# that width so persisted cards satisfy the schema (the values aren't meaningful).
+EMBED_DIM = 1536
+
 
 class FakeProvider(LLMProvider):
     async def summarize(self, text: str, *, system: str | None = None) -> Summary:
@@ -14,5 +18,5 @@ class FakeProvider(LLMProvider):
         return Summary(short=short or "(empty)", long=clean, tags=[])
 
     async def embed(self, text: str) -> list[float]:
-        digest = hashlib.sha256(text.encode("utf-8")).digest()
-        return [b / 255.0 for b in digest[:16]]
+        digest = hashlib.sha256(text.encode("utf-8")).digest()  # 32 bytes
+        return [digest[i % len(digest)] / 255.0 for i in range(EMBED_DIM)]

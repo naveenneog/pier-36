@@ -12,7 +12,7 @@ async def test_fake_gateway_summarize_and_embed() -> None:
     assert summary.short
     assert len(summary.short) <= 120
     embedding = await gateway.embed("hello")
-    assert len(embedding) == 16
+    assert len(embedding) == 1536
 
 
 def test_azure_requires_endpoint() -> None:

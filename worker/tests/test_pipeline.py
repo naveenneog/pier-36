@@ -16,7 +16,7 @@ async def test_ingest_produces_card() -> None:
     cards = await ingest(_OneItem(), gateway)
     assert len(cards) == 1
     assert cards[0].summary_short
-    assert len(cards[0].embedding) == 16
+    assert len(cards[0].embedding) == 1536
 
 
 async def test_ingest_dedup_across_runs() -> None:

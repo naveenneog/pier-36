@@ -76,7 +76,11 @@ sections exist so we never re-loop on already-decided or already-failed approach
   client-side **PKCE code-exchange** was failing ("flow state not found") after the redirect. Switched
   `Supabase.initialize` to `AuthFlowType.implicit`, so the session tokens come back in the redirect fragment
   and no code-exchange is needed. Also surfaced the last auth error on the Settings screen so failures are
-  never silent again.
+  never silent again. **Verified end-to-end on an emulator:** a real GitHub login persisted a Supabase session.
+- **Card ingestion fixed (embedding dimension).** The fake LLM provider emitted a **16-dim** embedding while
+  `cards.embedding` is `vector(1536)`, so every card upsert failed with PostgREST 400
+  *"expected 1536 dimensions, not 16"* — the scheduler 500'd and no cards were ever persisted. The fake
+  provider now emits a deterministic **1536-dim** vector (matching Azure/OpenAI `text-embedding-3-small`).
 
 ### Deferred / Out-of-scope (for now)
 - **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
