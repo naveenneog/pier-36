@@ -81,6 +81,9 @@ sections exist so we never re-loop on already-decided or already-failed approach
   `cards.embedding` is `vector(1536)`, so every card upsert failed with PostgREST 400
   *"expected 1536 dimensions, not 16"* — the scheduler 500'd and no cards were ever persisted. The fake
   provider now emits a deterministic **1536-dim** vector (matching Azure/OpenAI `text-embedding-3-small`).
+- **Empty-feed state.** Signing in with no cards yet used to land on a blank screen (looked like the login
+  failed). The feed now shows a friendly "You're all set — add a source" state with **Add sources** and
+  **Refresh** actions.
 
 ### Deferred / Out-of-scope (for now)
 - **X (Twitter)** ingestion → **v2** (paid, rate-limited API). Handles are still captured at follow time.
